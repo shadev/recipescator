@@ -1,0 +1,40 @@
+{
+  "Rid": "",
+  "Title": "Fig and Shallot Tart",
+  "Rating": 5,
+  "Servings": 4,
+  "Tags": [
+    "Snack",
+    "Fancy",
+    "Vegan"
+  ],
+  "PreparedOn": [
+    "2019-01-22"
+  ],
+  "Comments": [
+    "Our favourite snack",
+    "So fancy"
+  ],
+  "Time": {
+    "Active": 600000000000,
+    "Inactive": 600000000000,
+    "Prep": 600000000000
+  },
+  "Source": {
+    "SourceType": "COOKBOOK",
+    "Title": "Mississippi Vegan",
+    "Ref": "Page 82"
+  },
+  "Ingredients": [
+    {
+      "Name": "Cashew",
+      "Amount": "1 Cup",
+      "Preparation": ""
+    },
+    {
+      "Name": "Shallots",
+      "Amount": "4 large",
+      "Preparation": ""
+    }
+  ]
+}

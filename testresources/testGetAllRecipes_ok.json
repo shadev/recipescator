@@ -1,0 +1,82 @@
+[
+  {
+    "Rid": "123456789",
+    "Title": "Tiramisu Bars",
+    "Rating": 5,
+    "Servings": 4,
+    "Tags": [
+      "Dessert",
+      "Quick",
+      "Vegan"
+    ],
+    "PreparedOn": [
+      "2018-12-25"
+    ],
+    "Comments": [
+      "Tastes great",
+      "One of my favourite desserts"
+    ],
+    "Time": {
+      "Active": 600000000000,
+      "Inactive": 3600000000000,
+      "Prep": 600000000000
+    },
+    "Source": {
+      "SourceType": "COOKBOOK",
+      "Title": "Richa's Everyday Kitchen",
+      "Ref": "Page 214"
+    },
+    "Ingredients": [
+      {
+        "Name": "Cashew",
+        "Amount": "1 Cup",
+        "Preparation": ""
+      },
+      {
+        "Name": "Cocoa",
+        "Amount": "0.5 Cup",
+        "Preparation": ""
+      }
+    ]
+  },
+  {
+    "Rid": "abcdefgh",
+    "Title": "Cholent",
+    "Rating": 5,
+    "Servings": 4,
+    "Tags": [
+      "Stew",
+      "Quick",
+      "Vegan"
+    ],
+    "PreparedOn": [
+      "2019-01-06"
+    ],
+    "Comments": [
+      "Great winter dish",
+      "So yummy"
+    ],
+    "Time": {
+      "Active": 3000000000000,
+      "Inactive": 2400000000000,
+      "Prep": 1200000000000
+    },
+    "Source": {
+      "SourceType": "INTERNET",
+      "Title": "Veganomicon",
+      "Ref": "https://postpunkkitchen.de/cholent"
+    },
+    "Ingredients": [
+      {
+        "Name": "TVP",
+        "Amount": "1 Cup",
+        "Preparation": ""
+      },
+      {
+        "Name": "Onion",
+        "Amount": "1 large",
+        "Preparation": "Diced"
+      }
+    ]
+  }
+]

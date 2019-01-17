@@ -2,7 +2,7 @@ package rest
 
 import (
 	"github.com/labstack/echo"
-	"github.com/shadev/recipescator/src/model"
+	"github.com/shadev/recipescator/model"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 	"io/ioutil"

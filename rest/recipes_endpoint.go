@@ -2,7 +2,7 @@ package rest
 
 import (
 	"github.com/labstack/echo"
-	"github.com/shadev/recipescator/src/repository"
+	"github.com/shadev/recipescator/repository"
 	"net/http"
 )
 

@@ -1,6 +1,6 @@
 package repository
 
-import "github.com/shadev/recipescator/src/model"
+import "github.com/shadev/recipescator/model"
 
 type Repository interface {
 	FindAll() ([]model.Recipe, error)

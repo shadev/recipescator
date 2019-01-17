@@ -3,8 +3,8 @@ package main
 import (
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/middleware"
-	"github.com/shadev/recipescator/src/repository"
-	"github.com/shadev/recipescator/src/rest"
+	"github.com/shadev/recipescator/repository"
+	"github.com/shadev/recipescator/rest"
 )
 
 func main() {

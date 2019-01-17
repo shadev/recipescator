@@ -15,9 +15,9 @@ func main() {
 	e.Use(middleware.Secure())
 	e.Use(middleware.RemoveTrailingSlash())
 
-	repo := new(repository.MongoRepo)
-
-	endpoint := &rest.Endpoint{Repo: repo}
+	// Create components and wire them
+	repo := repository.MongoRepo{}
+	endpoint := rest.Endpoint{Repo: &repo}
 
 	e.GET("/recipes", endpoint.GetAllRecipes)
 

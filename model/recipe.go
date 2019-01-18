@@ -14,7 +14,7 @@ type (
 		Rating      uint
 		Servings    uint
 		Tags        []string
-		PreparedOn  []time.Time
+		PreparedOn  []string
 		Comments    []string
 		Time        Time
 		Source      Source

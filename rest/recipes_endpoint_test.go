@@ -2,6 +2,7 @@ package rest
 
 import (
 	"github.com/labstack/echo"
+	"github.com/pkg/errors"
 	"github.com/shadev/recipescator/model"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
@@ -18,19 +19,22 @@ type MockRepo struct {
 
 func (repo *MockRepo) FindAll() ([]model.Recipe, error) {
 	args := repo.Called()
-	return args.Get(0).([]model.Recipe), args.Error(1)
+	if args.Get(0) != nil {
+		return args.Get(0).([]model.Recipe), args.Error(1)
+	} else {
+		return nil, args.Error(1)
+	}
 }
 
 func TestGetAllRecipes_ok(t *testing.T) {
 	resultAsBytes, _ := ioutil.ReadFile("../testresources/testGetAllRecipes_ok.json")
-
 	expectedResult := string(resultAsBytes)
 
 	e := echo.New()
 	req := httptest.NewRequest(http.MethodGet, "/recipes", nil)
 	rec := httptest.NewRecorder()
 	mockRepo := new(MockRepo)
-	mockRepo.On("FindAll").Return(createRecipe(), nil)
+	mockRepo.On("FindAll").Return(createRecipes(), nil)
 	testee := Endpoint{mockRepo}
 
 	context := e.NewContext(req, rec)
@@ -42,7 +46,40 @@ func TestGetAllRecipes_ok(t *testing.T) {
 	mockRepo.AssertExpectations(t)
 }
 
-func createRecipe() []model.Recipe {
+func TestGetAllRecipes_empty(t *testing.T) {
+	e := echo.New()
+	req := httptest.NewRequest(http.MethodGet, "/recipes", nil)
+	rec := httptest.NewRecorder()
+	mockRepo := new(MockRepo)
+	mockRepo.On("FindAll").Return([]model.Recipe{}, nil)
+	testee := Endpoint{mockRepo}
+
+	context := e.NewContext(req, rec)
+
+	if assert.NoError(t, testee.GetAllRecipes(context)) {
+		assert.Equal(t, http.StatusOK, rec.Code)
+		assert.JSONEq(t, "[]", rec.Body.String())
+	}
+	mockRepo.AssertExpectations(t)
+}
+
+func TestGetAllRecipes_serverError(t *testing.T) {
+	e := echo.New()
+	req := httptest.NewRequest(http.MethodGet, "/recipes", nil)
+	rec := httptest.NewRecorder()
+	mockRepo := new(MockRepo)
+	mockRepo.On("FindAll").Return(nil, errors.New("Database offline"))
+	testee := Endpoint{mockRepo}
+
+	context := e.NewContext(req, rec)
+
+	if assert.NoError(t, testee.GetAllRecipes(context)) {
+		assert.Equal(t, http.StatusInternalServerError, rec.Code)
+	}
+	mockRepo.AssertExpectations(t)
+}
+
+func createRecipes() []model.Recipe {
 	recipes := []model.Recipe{
 		{
 			Rid:      "123456789",

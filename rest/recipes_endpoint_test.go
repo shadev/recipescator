@@ -19,10 +19,13 @@ type MockRepo struct {
 
 func (repo *MockRepo) FindAll() ([]model.Recipe, error) {
 	args := repo.Called()
-	if args.Get(0) != nil {
-		return args.Get(0).([]model.Recipe), args.Error(1)
+	recipes, ok := args.Get(0).([]model.Recipe)
+	e := args.Error(1)
+
+	if ok {
+		return recipes, e
 	} else {
-		return nil, args.Error(1)
+		return nil, e
 	}
 }
 

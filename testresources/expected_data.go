@@ -45,3 +45,20 @@ func SampleRecipesAsInterface() []interface{} {
 	recipes := SampleRecipes()
 	return []interface{}{recipes[0], recipes[1]}
 }
+
+func NewRecipeToBeInserted() model.Recipe {
+	return model.Recipe{
+		Title:    "Fig and Shallot Tarte",
+		Rating:   5,
+		Servings: 4,
+		Tags:     []string{"Snack", "Fancy", "Vegan"},
+		Ingredients: []model.Ingredient{
+			{Name: "Cashew", Amount: "1 Cup"},
+			{Name: "Shallots", Amount: "4 large"},
+		},
+		Source:     model.Source{SourceType: model.COOKBOOK, Title: "Mississippi Vegan", Ref: "Page 82"},
+		Time:       model.Time{Active: 30 * time.Minute, Inactive: 30 * time.Minute, Prep: 30 * time.Minute},
+		PreparedOn: []string{"2019-01-22"},
+		Comments:   []string{"Our favourite snack", "So fancy"},
+	}
+}

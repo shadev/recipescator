@@ -16,7 +16,7 @@ type MongoTestSuite struct {
 
 func (suite *MongoTestSuite) SetupTest() {
 	testDbName := "recipescator-test-db"
-	testColName := "recipes-find"
+	testColName := "recipes"
 
 	client, _ := mongo.Connect(context.Background(), "mongodb://localhost")
 	err := client.
@@ -40,6 +40,30 @@ func (suite *MongoTestSuite) TestFindAll_ok() {
 	assert.NoError(t, e)
 	assert.Len(t, actualRecipes, 2)
 	assert.ElementsMatch(t, testresources.SampleRecipes(), actualRecipes)
+}
+
+func (suite *MongoTestSuite) TestFindOne_ok() {
+	t := suite.T()
+
+	foundRecipe, e := suite.testee.FindOne("123456789")
+
+	assert.NoError(t, e)
+	assert.Equal(t, testresources.SampleRecipes()[0], foundRecipe)
+}
+
+func (suite *MongoTestSuite) TestInsert_ok() {
+	t := suite.T()
+
+	rid, e1 := suite.testee.Insert(testresources.NewRecipeToBeInserted())
+
+	assert.NoError(t, e1)
+	assert.Len(t, rid, 36)
+
+	foundRecipe, e2 := suite.testee.FindOne(rid)
+	assert.NoError(t, e2)
+	expected := testresources.NewRecipeToBeInserted()
+	expected.Rid = rid
+	assert.Equal(t, foundRecipe, &expected)
 }
 
 func TestMongoTestSuite(t *testing.T) {

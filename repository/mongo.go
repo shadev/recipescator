@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"github.com/google/uuid"
 	"github.com/mongodb/mongo-go-driver/bson"
 	"github.com/mongodb/mongo-go-driver/mongo"
 	"github.com/shadev/recipescator/model"
@@ -19,7 +20,6 @@ type MongoRepo struct {
 }
 
 func (repo *MongoRepo) FindAll() ([]*model.Recipe, error) {
-
 	collection := repo.Client.Database(repo.Db).Collection(repo.Collection)
 
 	cursor, e := collection.Find(context.Background(), bson.M{})
@@ -36,9 +36,9 @@ func (repo *MongoRepo) FindAll() ([]*model.Recipe, error) {
 
 		if e != nil {
 			log.Println("Could not decode recipe; ", e)
-			return nil, e
+		} else {
+			recipes = append(recipes, &recipe)
 		}
-		recipes = append(recipes, &recipe)
 	}
 
 	e = cursor.Close(context.Background())
@@ -47,4 +47,35 @@ func (repo *MongoRepo) FindAll() ([]*model.Recipe, error) {
 	}
 
 	return recipes, nil
+}
+
+func (repo *MongoRepo) FindOne(rid string) (*model.Recipe, error) {
+	collection := repo.Client.Database(repo.Db).Collection(repo.Collection)
+
+	result := collection.FindOne(context.Background(), bson.M{"rid": rid})
+
+	var recipe model.Recipe
+	e := result.Decode(&recipe)
+
+	if e != nil {
+		log.Println("Could not decode recipe; ", e)
+		return nil, e
+	}
+
+	return &recipe, nil
+}
+
+func (repo *MongoRepo) Insert(toBeInserted model.Recipe) (string, error) {
+	collection := repo.Client.Database(repo.Db).Collection(repo.Collection)
+
+	newUuid, _ := uuid.NewRandom()
+	toBeInserted.Rid = newUuid.String()
+	_, e := collection.InsertOne(context.Background(), toBeInserted)
+
+	if e != nil {
+		log.Println("Could not insert new recipe: ", toBeInserted, e)
+		return "", e
+	}
+
+	return newUuid.String(), nil
 }

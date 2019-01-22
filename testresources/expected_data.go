@@ -40,3 +40,8 @@ func SampleRecipes() []*model.Recipe {
 	}
 	return recipes
 }
+
+func SampleRecipesAsInterface() []interface{} {
+	recipes := SampleRecipes()
+	return []interface{}{recipes[0], recipes[1]}
+}

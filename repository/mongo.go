@@ -13,47 +13,37 @@ type Repository interface {
 }
 
 type MongoRepo struct {
+	Client     *mongo.Client
+	Db         string
+	Collection string
 }
 
 func (repo *MongoRepo) FindAll() ([]*model.Recipe, error) {
 
-	client, e := mongo.Connect(context.TODO(), "<url>")
+	collection := repo.Client.Database(repo.Db).Collection(repo.Collection)
+
+	cursor, e := collection.Find(context.Background(), bson.M{})
 
 	if e != nil {
-		log.Fatal("Could not connect to MongoDB; ", e)
-		return nil, e
-	}
-	e = client.Ping(context.TODO(), nil)
-
-	if e != nil {
-		log.Fatal("Could not ping MongoDB; ", e)
-		return nil, e
-	}
-
-	collection := client.Database("recipescator-db").Collection("recipes")
-
-	cursor, e := collection.Find(context.TODO(), bson.M{})
-
-	if e != nil {
-		log.Fatal("Could not get the collection from the database; ", e)
+		log.Println("Could not get the collection from the database; ", e)
 		return nil, e
 	}
 	var recipes []*model.Recipe
 
-	for cursor.Next(context.TODO()) {
+	for cursor.Next(context.Background()) {
 		var recipe model.Recipe
 		e := cursor.Decode(&recipe)
 
 		if e != nil {
-			log.Fatal("Could not decode recipe; ", e)
+			log.Println("Could not decode recipe; ", e)
 			return nil, e
 		}
 		recipes = append(recipes, &recipe)
 	}
 
-	e = cursor.Close(context.TODO())
+	e = cursor.Close(context.Background())
 	if e != nil {
-		log.Fatal("Could not close cursor; ", e)
+		log.Println("Could not close cursor; ", e)
 	}
 
 	return recipes, nil

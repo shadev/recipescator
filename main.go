@@ -34,7 +34,7 @@ func initEcho() *echo.Echo {
 func mongoRepo() *repository.MongoRepo {
 	client, err := mongo.Connect(context.Background(), os.Getenv("RECIPESCATOR_MONGO_URL"))
 	if err != nil {
-		log.Fatal("Could not connect to MongoDB ", err)
+		log.Fatal("Could not connect to MongoDB. You need to set the environment variable RECIPESCATOR_MONGO_URL to a valid URI. ", err)
 	}
 	err = client.Ping(context.Background(), nil)
 	if err != nil {

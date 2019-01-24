@@ -10,6 +10,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
+	"strings"
 	"testing"
 )
 
@@ -38,6 +39,18 @@ func (repo *MockRepo) FindOne(rid string) (*model.Recipe, error) {
 		return recipe, e
 	} else {
 		return nil, e
+	}
+}
+
+func (repo *MockRepo) Insert(toBeInserted model.Recipe) (string, error) {
+	args := repo.Called()
+	rid := args.String(0)
+	e := args.Error(1)
+
+	if e != nil {
+		return "", e
+	} else {
+		return rid, e
 	}
 }
 
@@ -141,6 +154,63 @@ func TestGetAllRecipes_serverError(t *testing.T) {
 	context := e.NewContext(req, rec)
 
 	if assert.NoError(t, testee.GetAllRecipes(context)) {
+		assert.Equal(t, http.StatusInternalServerError, rec.Code)
+	}
+	mockRepo.AssertExpectations(t)
+}
+
+func TestPostSingleRecipe_ok(t *testing.T) {
+	resultAsBytes, _ := ioutil.ReadFile("../testresources/newRecipe.json")
+	expectedResult := string(resultAsBytes)
+
+	e := echo.New()
+	req := httptest.NewRequest(http.MethodPost, "/recipes", strings.NewReader(expectedResult))
+	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
+	rec := httptest.NewRecorder()
+	mockRepo := new(MockRepo)
+	mockRepo.On("Insert").Return("1a2b3c4e5f6g7h", nil)
+	testee := Endpoint{mockRepo}
+
+	context := e.NewContext(req, rec)
+
+	if assert.NoError(t, testee.PostNewRecipe(context)) {
+		assert.Equal(t, http.StatusCreated, rec.Code)
+		assert.Equal(t, "/recipes/1a2b3c4e5f6g7h", rec.Header().Get("Location"))
+	}
+	mockRepo.AssertExpectations(t)
+}
+
+func TestPostSingleRecipe_BadRequest(t *testing.T) {
+	e := echo.New()
+	req := httptest.NewRequest(http.MethodPost, "/recipes", strings.NewReader("{elem:"))
+	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
+	rec := httptest.NewRecorder()
+	mockRepo := new(MockRepo)
+	testee := Endpoint{mockRepo}
+
+	context := e.NewContext(req, rec)
+
+	if assert.NoError(t, testee.PostNewRecipe(context)) {
+		assert.Equal(t, http.StatusBadRequest, rec.Code)
+	}
+	mockRepo.AssertExpectations(t)
+}
+
+func TestPostSingleRecipe_serverError(t *testing.T) {
+	resultAsBytes, _ := ioutil.ReadFile("../testresources/newRecipe.json")
+	expectedResult := string(resultAsBytes)
+
+	e := echo.New()
+	req := httptest.NewRequest(http.MethodPost, "/recipes", strings.NewReader(expectedResult))
+	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
+	rec := httptest.NewRecorder()
+	mockRepo := new(MockRepo)
+	mockRepo.On("Insert").Return("", errors.New("Something's wrong with Echo"))
+	testee := Endpoint{mockRepo}
+
+	context := e.NewContext(req, rec)
+
+	if assert.NoError(t, testee.PostNewRecipe(context)) {
 		assert.Equal(t, http.StatusInternalServerError, rec.Code)
 	}
 	mockRepo.AssertExpectations(t)

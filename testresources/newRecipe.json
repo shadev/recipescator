@@ -1,29 +1,29 @@
 {
-  "Rid": "123456789",
-  "Title": "Tiramisu Bars",
+  "Rid": "",
+  "Title": "Fig and Shallot Tart",
   "Rating": 5,
   "Servings": 4,
   "Tags": [
-    "Dessert",
-    "Quick",
+    "Snack",
+    "Fancy",
     "Vegan"
   ],
   "PreparedOn": [
-    "2018-12-25"
+    "2019-01-22"
   ],
   "Comments": [
-    "Tastes great",
-    "One of my favourite desserts"
+    "Our favourite snack",
+    "So fancy"
   ],
   "Time": {
     "Active": 600000000000,
-    "Inactive": 3600000000000,
+    "Inactive": 600000000000,
     "Prep": 600000000000
   },
   "Source": {
     "SourceType": "COOKBOOK",
-    "Title": "Richa's Everyday Kitchen",
-    "Ref": "Page 214"
+    "Title": "Mississippi Vegan",
+    "Ref": "Page 82"
   },
   "Ingredients": [
     {
@@ -32,8 +32,8 @@
       "Preparation": ""
     },
     {
-      "Name": "Cocoa",
-      "Amount": "0.5 Cup",
+      "Name": "Shallots",
+      "Amount": "4 large",
       "Preparation": ""
     }
   ]

@@ -12,6 +12,7 @@ import (
 type Repository interface {
 	FindAll() ([]*model.Recipe, error)
 	FindOne(rid string) (*model.Recipe, error)
+	Insert(toBeInserted model.Recipe) (string, error)
 }
 
 type MongoRepo struct {

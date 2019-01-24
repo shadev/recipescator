@@ -18,6 +18,7 @@ func main() {
 
 	e.GET("/recipes", endpoint.GetAllRecipes)
 	e.GET("/recipes/:rid", endpoint.GetSingleRecipe)
+	e.POST("/recipes", endpoint.PostNewRecipe)
 
 	serverError := e.Start(":1323")
 	e.Logger.Fatal(serverError)

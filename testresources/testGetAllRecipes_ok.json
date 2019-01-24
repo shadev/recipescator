@@ -17,9 +17,9 @@
       "One of my favourite desserts"
     ],
     "Time": {
-      "Active": 6e+11,
-      "Inactive": 3.6e+12,
-      "Prep": 6e+11
+      "Active": 600000000000,
+      "Inactive": 3600000000000,
+      "Prep": 600000000000
     },
     "Source": {
       "SourceType": "COOKBOOK",
@@ -57,9 +57,9 @@
       "So yummy"
     ],
     "Time": {
-      "Active": 3e+12,
-      "Inactive": 2.4e+12,
-      "Prep": 1.2e+12
+      "Active": 3000000000000,
+      "Inactive": 2400000000000,
+      "Prep": 1200000000000
     },
     "Source": {
       "SourceType": "INTERNET",

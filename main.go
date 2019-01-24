@@ -17,6 +17,7 @@ func main() {
 	endpoint := rest.Endpoint{Repo: mongoRepo()}
 
 	e.GET("/recipes", endpoint.GetAllRecipes)
+	e.GET("/recipes/:rid", endpoint.GetSingleRecipe)
 
 	serverError := e.Start(":1323")
 	e.Logger.Fatal(serverError)
@@ -24,10 +25,10 @@ func main() {
 
 func initEcho() *echo.Echo {
 	e := echo.New()
+	e.Pre(middleware.RemoveTrailingSlash())
 	e.Use(middleware.Logger())
 	e.Use(middleware.Recover())
 	e.Use(middleware.Secure())
-	e.Use(middleware.RemoveTrailingSlash())
 	return e
 }
 

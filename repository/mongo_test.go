@@ -51,6 +51,15 @@ func (suite *MongoTestSuite) TestFindOne_ok() {
 	assert.Equal(t, testresources.SampleRecipes()[0], foundRecipe)
 }
 
+func (suite *MongoTestSuite) TestFindOne_notFound() {
+	t := suite.T()
+
+	notFoundRecipe, e := suite.testee.FindOne("invalidId")
+
+	assert.NoError(t, e)
+	assert.Nil(t, notFoundRecipe)
+}
+
 func (suite *MongoTestSuite) TestInsert_ok() {
 	t := suite.T()
 

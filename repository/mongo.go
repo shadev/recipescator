@@ -11,6 +11,7 @@ import (
 
 type Repository interface {
 	FindAll() ([]*model.Recipe, error)
+	FindOne(rid string) (*model.Recipe, error)
 }
 
 type MongoRepo struct {
@@ -59,7 +60,7 @@ func (repo *MongoRepo) FindOne(rid string) (*model.Recipe, error) {
 
 	if e != nil {
 		log.Println("Could not decode recipe; ", e)
-		return nil, e
+		return nil, nil
 	}
 
 	return &recipe, nil

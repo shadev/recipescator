@@ -29,6 +29,70 @@ func (repo *MockRepo) FindAll() ([]*model.Recipe, error) {
 	}
 }
 
+func (repo *MockRepo) FindOne(rid string) (*model.Recipe, error) {
+	args := repo.Called()
+	recipe, ok := args.Get(0).(*model.Recipe)
+	e := args.Error(1)
+
+	if ok {
+		return recipe, e
+	} else {
+		return nil, e
+	}
+}
+
+func TestGetSingleRecipe_ok(t *testing.T) {
+	resultAsBytes, _ := ioutil.ReadFile("../testresources/testGetSingleRecipe_ok.json")
+	expectedResult := string(resultAsBytes)
+
+	e := echo.New()
+	req := httptest.NewRequest(http.MethodGet, "/recipes/123456789", nil)
+	rec := httptest.NewRecorder()
+	mockRepo := new(MockRepo)
+	mockRepo.On("FindOne").Return(testresources.SampleRecipes()[0], nil)
+	testee := Endpoint{mockRepo}
+
+	context := e.NewContext(req, rec)
+
+	if assert.NoError(t, testee.GetSingleRecipe(context)) {
+		assert.Equal(t, http.StatusOK, rec.Code)
+		assert.JSONEq(t, expectedResult, rec.Body.String())
+	}
+	mockRepo.AssertExpectations(t)
+}
+
+func TestGetSingleRecipe_notFound(t *testing.T) {
+	e := echo.New()
+	req := httptest.NewRequest(http.MethodGet, "/recipes/invalidId", nil)
+	rec := httptest.NewRecorder()
+	mockRepo := new(MockRepo)
+	mockRepo.On("FindOne").Return(nil, nil)
+	testee := Endpoint{mockRepo}
+
+	context := e.NewContext(req, rec)
+
+	if assert.NoError(t, testee.GetSingleRecipe(context)) {
+		assert.Equal(t, http.StatusNotFound, rec.Code)
+	}
+	mockRepo.AssertExpectations(t)
+}
+
+func TestGetSingleRecipe_serverError(t *testing.T) {
+	e := echo.New()
+	req := httptest.NewRequest(http.MethodGet, "/recipes/123456789", nil)
+	rec := httptest.NewRecorder()
+	mockRepo := new(MockRepo)
+	mockRepo.On("FindOne").Return(nil, errors.New("Database offline"))
+	testee := Endpoint{mockRepo}
+
+	context := e.NewContext(req, rec)
+
+	if assert.NoError(t, testee.GetSingleRecipe(context)) {
+		assert.Equal(t, http.StatusInternalServerError, rec.Code)
+	}
+	mockRepo.AssertExpectations(t)
+}
+
 func TestGetAllRecipes_ok(t *testing.T) {
 	resultAsBytes, _ := ioutil.ReadFile("../testresources/testGetAllRecipes_ok.json")
 	expectedResult := string(resultAsBytes)

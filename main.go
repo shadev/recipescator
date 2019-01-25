@@ -14,11 +14,17 @@ import (
 func main() {
 	e := initEcho()
 
-	endpoint := rest.Endpoint{Repo: mongoRepo()}
+	recipeEndpoint := rest.RecipeEndpoint{Repo: mongoRepo()}
+	loginEndpoint := rest.LoginEndpoint{JwtKey: jwtKey()}
 
-	e.GET("/recipes", endpoint.GetAllRecipes)
-	e.GET("/recipes/:rid", endpoint.GetSingleRecipe)
-	e.POST("/recipes", endpoint.PostNewRecipe)
+	e.POST("/login", loginEndpoint.Login)
+
+	r := e.Group("/api")
+	r.Use(middleware.JWT([]byte(jwtKey())))
+
+	r.GET("/recipes", recipeEndpoint.GetAllRecipes)
+	r.GET("/recipes/:rid", recipeEndpoint.GetSingleRecipe)
+	r.POST("/recipes", recipeEndpoint.PostNewRecipe)
 
 	serverError := e.Start(":1323")
 	e.Logger.Fatal(serverError)
@@ -43,4 +49,12 @@ func mongoRepo() *repository.MongoRepo {
 		log.Fatal("Could not ping MongoDB; ", err)
 	}
 	return &repository.MongoRepo{Client: client, Db: "recipescator-db", Collection: "recipes"}
+}
+
+func jwtKey() string {
+	jwtKey := os.Getenv("RECIPESCATOR_JWT_KEY")
+	if jwtKey == "" {
+		log.Fatal("Missing environment variable RECIPESCATOR_JWT_KEY")
+	}
+	return jwtKey
 }

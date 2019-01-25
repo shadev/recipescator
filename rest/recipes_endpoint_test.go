@@ -63,7 +63,7 @@ func TestGetSingleRecipe_ok(t *testing.T) {
 	rec := httptest.NewRecorder()
 	mockRepo := new(MockRepo)
 	mockRepo.On("FindOne").Return(testresources.SampleRecipes()[0], nil)
-	testee := Endpoint{mockRepo}
+	testee := RecipeEndpoint{mockRepo}
 
 	context := e.NewContext(req, rec)
 
@@ -80,7 +80,7 @@ func TestGetSingleRecipe_notFound(t *testing.T) {
 	rec := httptest.NewRecorder()
 	mockRepo := new(MockRepo)
 	mockRepo.On("FindOne").Return(nil, nil)
-	testee := Endpoint{mockRepo}
+	testee := RecipeEndpoint{mockRepo}
 
 	context := e.NewContext(req, rec)
 
@@ -96,7 +96,7 @@ func TestGetSingleRecipe_serverError(t *testing.T) {
 	rec := httptest.NewRecorder()
 	mockRepo := new(MockRepo)
 	mockRepo.On("FindOne").Return(nil, errors.New("Database offline"))
-	testee := Endpoint{mockRepo}
+	testee := RecipeEndpoint{mockRepo}
 
 	context := e.NewContext(req, rec)
 
@@ -115,7 +115,7 @@ func TestGetAllRecipes_ok(t *testing.T) {
 	rec := httptest.NewRecorder()
 	mockRepo := new(MockRepo)
 	mockRepo.On("FindAll").Return(testresources.SampleRecipes(), nil)
-	testee := Endpoint{mockRepo}
+	testee := RecipeEndpoint{mockRepo}
 
 	context := e.NewContext(req, rec)
 
@@ -132,7 +132,7 @@ func TestGetAllRecipes_empty(t *testing.T) {
 	rec := httptest.NewRecorder()
 	mockRepo := new(MockRepo)
 	mockRepo.On("FindAll").Return([]*model.Recipe{}, nil)
-	testee := Endpoint{mockRepo}
+	testee := RecipeEndpoint{mockRepo}
 
 	context := e.NewContext(req, rec)
 
@@ -149,7 +149,7 @@ func TestGetAllRecipes_serverError(t *testing.T) {
 	rec := httptest.NewRecorder()
 	mockRepo := new(MockRepo)
 	mockRepo.On("FindAll").Return(nil, errors.New("Database offline"))
-	testee := Endpoint{mockRepo}
+	testee := RecipeEndpoint{mockRepo}
 
 	context := e.NewContext(req, rec)
 
@@ -169,7 +169,7 @@ func TestPostSingleRecipe_ok(t *testing.T) {
 	rec := httptest.NewRecorder()
 	mockRepo := new(MockRepo)
 	mockRepo.On("Insert").Return("1a2b3c4e5f6g7h", nil)
-	testee := Endpoint{mockRepo}
+	testee := RecipeEndpoint{mockRepo}
 
 	context := e.NewContext(req, rec)
 
@@ -186,7 +186,7 @@ func TestPostSingleRecipe_BadRequest(t *testing.T) {
 	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
 	rec := httptest.NewRecorder()
 	mockRepo := new(MockRepo)
-	testee := Endpoint{mockRepo}
+	testee := RecipeEndpoint{mockRepo}
 
 	context := e.NewContext(req, rec)
 
@@ -206,7 +206,7 @@ func TestPostSingleRecipe_serverError(t *testing.T) {
 	rec := httptest.NewRecorder()
 	mockRepo := new(MockRepo)
 	mockRepo.On("Insert").Return("", errors.New("Something's wrong with Echo"))
-	testee := Endpoint{mockRepo}
+	testee := RecipeEndpoint{mockRepo}
 
 	context := e.NewContext(req, rec)
 

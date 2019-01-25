@@ -8,11 +8,11 @@ import (
 	"net/http"
 )
 
-type Endpoint struct {
+type RecipeEndpoint struct {
 	Repo repository.Repository
 }
 
-func (ep *Endpoint) GetAllRecipes(context echo.Context) error {
+func (ep *RecipeEndpoint) GetAllRecipes(context echo.Context) error {
 	recipes, e := ep.Repo.FindAll()
 	if e != nil {
 		log.Println(e)
@@ -21,7 +21,7 @@ func (ep *Endpoint) GetAllRecipes(context echo.Context) error {
 	return context.JSONPretty(http.StatusOK, recipes, " ")
 }
 
-func (ep *Endpoint) GetSingleRecipe(context echo.Context) error {
+func (ep *RecipeEndpoint) GetSingleRecipe(context echo.Context) error {
 	recipe, e := ep.Repo.FindOne(context.Param("rid"))
 	if e != nil {
 		log.Println(e)
@@ -33,7 +33,7 @@ func (ep *Endpoint) GetSingleRecipe(context echo.Context) error {
 	return context.JSONPretty(http.StatusOK, recipe, " ")
 }
 
-func (ep *Endpoint) PostNewRecipe(context echo.Context) error {
+func (ep *RecipeEndpoint) PostNewRecipe(context echo.Context) error {
 	var newRecipe model.Recipe
 	e := context.Bind(&newRecipe)
 

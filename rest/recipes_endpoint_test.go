@@ -35,7 +35,7 @@ func (repo *MockRepo) FindOne(rid string) (*model.Recipe, error) {
 	recipe, ok := args.Get(0).(*model.Recipe)
 	e := args.Error(1)
 
-	if ok {
+	if rid == "123456789" && ok {
 		return recipe, e
 	} else {
 		return nil, e
@@ -59,13 +59,16 @@ func TestGetSingleRecipe_ok(t *testing.T) {
 	expectedResult := string(resultAsBytes)
 
 	e := echo.New()
-	req := httptest.NewRequest(http.MethodGet, "/recipes/123456789", nil)
+	req := httptest.NewRequest(http.MethodGet, "/api/recipes/123456789", nil)
 	rec := httptest.NewRecorder()
 	mockRepo := new(MockRepo)
 	mockRepo.On("FindOne").Return(testresources.SampleRecipes()[0], nil)
 	testee := RecipeEndpoint{mockRepo}
 
 	context := e.NewContext(req, rec)
+	context.SetPath("/api/recipes/:rid")
+	context.SetParamNames("rid")
+	context.SetParamValues("123456789")
 
 	if assert.NoError(t, testee.GetSingleRecipe(context)) {
 		assert.Equal(t, http.StatusOK, rec.Code)
@@ -76,13 +79,16 @@ func TestGetSingleRecipe_ok(t *testing.T) {
 
 func TestGetSingleRecipe_notFound(t *testing.T) {
 	e := echo.New()
-	req := httptest.NewRequest(http.MethodGet, "/recipes/invalidId", nil)
+	req := httptest.NewRequest(http.MethodGet, "/api/recipes/invalidId", nil)
 	rec := httptest.NewRecorder()
 	mockRepo := new(MockRepo)
 	mockRepo.On("FindOne").Return(nil, nil)
 	testee := RecipeEndpoint{mockRepo}
 
 	context := e.NewContext(req, rec)
+	context.SetPath("/api/recipes/:rid")
+	context.SetParamNames("rid")
+	context.SetParamValues("invalidId")
 
 	if assert.NoError(t, testee.GetSingleRecipe(context)) {
 		assert.Equal(t, http.StatusNotFound, rec.Code)
@@ -92,13 +98,16 @@ func TestGetSingleRecipe_notFound(t *testing.T) {
 
 func TestGetSingleRecipe_serverError(t *testing.T) {
 	e := echo.New()
-	req := httptest.NewRequest(http.MethodGet, "/recipes/123456789", nil)
+	req := httptest.NewRequest(http.MethodGet, "/api/recipes/123456789", nil)
 	rec := httptest.NewRecorder()
 	mockRepo := new(MockRepo)
 	mockRepo.On("FindOne").Return(nil, errors.New("Database offline"))
 	testee := RecipeEndpoint{mockRepo}
 
 	context := e.NewContext(req, rec)
+	context.SetPath("/api/recipes/:rid")
+	context.SetParamNames("rid")
+	context.SetParamValues("123456789")
 
 	if assert.NoError(t, testee.GetSingleRecipe(context)) {
 		assert.Equal(t, http.StatusInternalServerError, rec.Code)
@@ -111,7 +120,7 @@ func TestGetAllRecipes_ok(t *testing.T) {
 	expectedResult := string(resultAsBytes)
 
 	e := echo.New()
-	req := httptest.NewRequest(http.MethodGet, "/recipes", nil)
+	req := httptest.NewRequest(http.MethodGet, "/api/recipes", nil)
 	rec := httptest.NewRecorder()
 	mockRepo := new(MockRepo)
 	mockRepo.On("FindAll").Return(testresources.SampleRecipes(), nil)
@@ -128,7 +137,7 @@ func TestGetAllRecipes_ok(t *testing.T) {
 
 func TestGetAllRecipes_empty(t *testing.T) {
 	e := echo.New()
-	req := httptest.NewRequest(http.MethodGet, "/recipes", nil)
+	req := httptest.NewRequest(http.MethodGet, "/api/recipes", nil)
 	rec := httptest.NewRecorder()
 	mockRepo := new(MockRepo)
 	mockRepo.On("FindAll").Return([]*model.Recipe{}, nil)
@@ -145,7 +154,7 @@ func TestGetAllRecipes_empty(t *testing.T) {
 
 func TestGetAllRecipes_serverError(t *testing.T) {
 	e := echo.New()
-	req := httptest.NewRequest(http.MethodGet, "/recipes", nil)
+	req := httptest.NewRequest(http.MethodGet, "/api/recipes", nil)
 	rec := httptest.NewRecorder()
 	mockRepo := new(MockRepo)
 	mockRepo.On("FindAll").Return(nil, errors.New("Database offline"))
@@ -164,7 +173,7 @@ func TestPostSingleRecipe_ok(t *testing.T) {
 	expectedResult := string(resultAsBytes)
 
 	e := echo.New()
-	req := httptest.NewRequest(http.MethodPost, "/recipes", strings.NewReader(expectedResult))
+	req := httptest.NewRequest(http.MethodPost, "/api/recipes", strings.NewReader(expectedResult))
 	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
 	rec := httptest.NewRecorder()
 	mockRepo := new(MockRepo)
@@ -182,7 +191,7 @@ func TestPostSingleRecipe_ok(t *testing.T) {
 
 func TestPostSingleRecipe_BadRequest(t *testing.T) {
 	e := echo.New()
-	req := httptest.NewRequest(http.MethodPost, "/recipes", strings.NewReader("{elem:"))
+	req := httptest.NewRequest(http.MethodPost, "/api/recipes", strings.NewReader("{elem:"))
 	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
 	rec := httptest.NewRecorder()
 	mockRepo := new(MockRepo)
@@ -201,7 +210,7 @@ func TestPostSingleRecipe_serverError(t *testing.T) {
 	expectedResult := string(resultAsBytes)
 
 	e := echo.New()
-	req := httptest.NewRequest(http.MethodPost, "/recipes", strings.NewReader(expectedResult))
+	req := httptest.NewRequest(http.MethodPost, "/api/recipes", strings.NewReader(expectedResult))
 	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
 	rec := httptest.NewRecorder()
 	mockRepo := new(MockRepo)

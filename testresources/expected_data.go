@@ -5,6 +5,7 @@ import (
 	"time"
 )
 
+// SampleRecipes returns two sample recipes
 func SampleRecipes() []*model.Recipe {
 	recipes := []*model.Recipe{
 		{
@@ -41,11 +42,13 @@ func SampleRecipes() []*model.Recipe {
 	return recipes
 }
 
+// SampleRecipesAsInterface returns the two sample recipes as interface{}
 func SampleRecipesAsInterface() []interface{} {
 	recipes := SampleRecipes()
 	return []interface{}{recipes[0], recipes[1]}
 }
 
+// NewRecipeToBeInserted returns a third recipe used for insertion tests
 func NewRecipeToBeInserted() model.Recipe {
 	return model.Recipe{
 		Title:    "Fig and Shallot Tarte",

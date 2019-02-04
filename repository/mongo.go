@@ -9,18 +9,21 @@ import (
 	"log"
 )
 
+// A Repository allows finding and inserting of recipes
 type Repository interface {
 	FindAll() ([]*model.Recipe, error)
 	FindOne(rid string) (*model.Recipe, error)
 	Insert(toBeInserted model.Recipe) (string, error)
 }
 
+// MongoRepo is an implementation of Repository for MongoDB
 type MongoRepo struct {
 	Client     *mongo.Client
 	Db         string
 	Collection string
 }
 
+// FindAll returns all recipes saved in this repository
 func (repo *MongoRepo) FindAll() ([]*model.Recipe, error) {
 	collection := repo.Client.Database(repo.Db).Collection(repo.Collection)
 
@@ -51,6 +54,7 @@ func (repo *MongoRepo) FindAll() ([]*model.Recipe, error) {
 	return recipes, nil
 }
 
+// FindOne finds a single recipe in this repository using its 'rid'
 func (repo *MongoRepo) FindOne(rid string) (*model.Recipe, error) {
 	collection := repo.Client.Database(repo.Db).Collection(repo.Collection)
 
@@ -67,11 +71,12 @@ func (repo *MongoRepo) FindOne(rid string) (*model.Recipe, error) {
 	return &recipe, nil
 }
 
+// Insert a new recipe into this repository; the 'rid' is generated
 func (repo *MongoRepo) Insert(toBeInserted model.Recipe) (string, error) {
 	collection := repo.Client.Database(repo.Db).Collection(repo.Collection)
 
-	newUuid, _ := uuid.NewRandom()
-	toBeInserted.Rid = newUuid.String()
+	newUUID, _ := uuid.NewRandom()
+	toBeInserted.Rid = newUUID.String()
 	_, e := collection.InsertOne(context.Background(), toBeInserted)
 
 	if e != nil {
@@ -79,5 +84,5 @@ func (repo *MongoRepo) Insert(toBeInserted model.Recipe) (string, error) {
 		return "", e
 	}
 
-	return newUuid.String(), nil
+	return newUUID.String(), nil
 }

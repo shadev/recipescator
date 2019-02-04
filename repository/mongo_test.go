@@ -9,6 +9,7 @@ import (
 	"testing"
 )
 
+// This test suite requires a running MongoDb on localhost
 type MongoTestSuite struct {
 	suite.Suite
 	testee MongoRepo
@@ -23,6 +24,7 @@ func (suite *MongoTestSuite) SetupTest() {
 		Database(testDbName).
 		Collection(testColName).
 		Drop(context.Background())
+	assert.Nil(suite.T(), err)
 	_, err = client.
 		Database(testDbName).
 		Collection(testColName).

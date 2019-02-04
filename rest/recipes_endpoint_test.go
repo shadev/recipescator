@@ -23,11 +23,10 @@ func (repo *MockRepo) FindAll() ([]*model.Recipe, error) {
 	recipes, ok := args.Get(0).([]*model.Recipe)
 	e := args.Error(1)
 
-	if ok {
-		return recipes, e
-	} else {
+	if !ok {
 		return nil, e
 	}
+	return recipes, e
 }
 
 func (repo *MockRepo) FindOne(rid string) (*model.Recipe, error) {
@@ -37,9 +36,8 @@ func (repo *MockRepo) FindOne(rid string) (*model.Recipe, error) {
 
 	if rid == "123456789" && ok {
 		return recipe, e
-	} else {
-		return nil, e
 	}
+	return nil, e
 }
 
 func (repo *MockRepo) Insert(toBeInserted model.Recipe) (string, error) {
@@ -49,9 +47,8 @@ func (repo *MockRepo) Insert(toBeInserted model.Recipe) (string, error) {
 
 	if e != nil {
 		return "", e
-	} else {
-		return rid, e
 	}
+	return rid, e
 }
 
 func TestGetSingleRecipe_ok(t *testing.T) {

@@ -7,10 +7,12 @@ import (
 	"time"
 )
 
+// LoginEndpoint provides login functionality
 type LoginEndpoint struct {
 	JwtKey string
 }
 
+// Login checks the user's credentials and returns a JWT token if successful
 func (ep *LoginEndpoint) Login(context echo.Context) error {
 	username := context.FormValue("username")
 	password := context.FormValue("password")

@@ -8,8 +8,11 @@ import (
 	"github.com/shadev/recipescator/repository"
 	"github.com/shadev/recipescator/rest"
 	"log"
+	"net/http"
 	"os"
 )
+import _ "expvar"
+import _ "net/http/pprof"
 
 func main() {
 	e := initEcho()
@@ -25,6 +28,9 @@ func main() {
 	r.GET("/recipes", recipeEndpoint.GetAllRecipes)
 	r.GET("/recipes/:rid", recipeEndpoint.GetSingleRecipe)
 	r.POST("/recipes", recipeEndpoint.PostNewRecipe)
+
+	dbg := e.Group("/debug")
+	dbg.GET("/*", echo.WrapHandler(http.DefaultServeMux))
 
 	serverError := e.Start(":1323")
 	e.Logger.Fatal(serverError)
